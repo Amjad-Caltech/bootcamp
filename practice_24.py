@@ -1,5 +1,7 @@
 import numpy as np
+import scipy.stats
 import matplotlib.pyplot as plt
+import bootcamp_utils as bcu
 
 import seaborn as sns
 colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
@@ -10,19 +12,19 @@ sns.set(style='whitegrid', palette=colors, rc={'axes.labelsize': 16})
 xa_low = np.loadtxt('data/xa_low_food.csv', comments='#')
 xa_high = np.loadtxt('data/xa_high_food.csv', comments='#')
 
-bins = np.arange(1700, 2501, 50)
+x = np.linspace(1600, 2500, 400)
+cdf_theor = scipy.stats.norm.cdf(x, loc=np.mean(xa_low), scale=np.std(xa_low))
 
-# Set up a figure with set of axes
-fig, ax = plt.subplots(1, 1)
+data_x, data_y = bcu.ecdf(xa_low)
 
-# Add axis labels
-ax.set_xlabel('Cross-sectional area (µm$^2$)')
-ax.set_ylabel('count')
+fig, ax = plt.subplots(1,1)
 
+_ = ax.set_xlabel('cross sectional diameter')
+_ = ax.set_ylabel('ECDF')
 
-# Generate the histogram for the low-density fed mother
-_ = ax.hist(xa_low, bins=bins)
+_ = ax.plot(x, cdf_theor, color='gray')
+_ = ax.plot(data_x, data_y, label='low food')
 
-fig.savefig('practice_histogram.pdf')
+_ = ax.legend()
 
 plt.show()
